@@ -1,0 +1,26 @@
+class Solution {
+public:
+    int distinctSubseqII(string s) {
+        int mod = 1e9+7;
+        int n = s.length();
+        int prefix[n+2];
+        int lastt[27];
+        int dp[n+1];
+        memset(lastt,-1,sizeof(lastt));
+
+        prefix[0]=1;
+        dp[0] = 1;
+        for(int i=1;i<=n;i++){
+            dp[i] = prefix[i-1];
+            if(lastt[s[i-1]-'a'] != -1){
+                int idx = lastt[s[i-1]-'a'];
+                dp[i]-= prefix[idx];
+                dp[i]%=mod;
+            }
+            lastt[s[i-1]-'a'] = i-1;
+            prefix[i] = prefix[i-1]+dp[i];
+            prefix[i]%=mod;
+        }
+        return ((prefix[n]-1)%mod+mod)%mod;
+    }
+};
