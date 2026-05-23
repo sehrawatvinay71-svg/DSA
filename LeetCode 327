@@ -1,0 +1,26 @@
+class Solution {
+public:
+    int countRangeSum(vector<int>& nums, int lower, int upper) {
+        long long prefix = 0;
+        multiset<long long> mst;
+        mst.insert(0);
+
+        long long count = 0;
+
+        for(auto x: nums) {
+            prefix += x;
+
+            long long left = prefix - upper;
+            long long right = prefix - lower;
+
+            auto it1 = mst.lower_bound(left);
+            auto it2 = mst.upper_bound(right);
+
+            count += distance(it1, it2);
+
+            mst.insert(prefix);
+        }
+
+        return (int)count;
+    }
+};
