@@ -1,0 +1,41 @@
+class Solution {
+public:
+    int maxSumSubmatrix(vector<vector<int>>& arr, int k) {
+        int n = arr.size();
+        int m = arr[0].size();
+
+        vector<vector<int>> p(n, vector<int>(m, 0));
+
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                p[i][j] = arr[i][j];
+                if(i > 0) p[i][j] += p[i-1][j];
+                if(j > 0) p[i][j] += p[i][j-1];
+                if(i > 0 && j > 0) p[i][j] -= p[i-1][j-1];
+            }
+        }
+
+        auto getSum = [&](int r1, int c1, int r2, int c2){
+            int res = p[r2][c2];
+            if(c1 > 0) res -= p[r2][c1-1];
+            if(r1 > 0) res -= p[r1-1][c2];
+            if(r1 > 0 && c1 > 0) res += p[r1-1][c1-1];
+            return res;
+        };
+
+        int ans = INT_MIN;
+
+        for(int r1 = 0; r1 < n; r1++){
+            for(int c1 = 0; c1 < m; c1++){
+                for(int r2 = r1; r2 < n; r2++){
+                    for(int c2 = c1; c2 < m; c2++){
+                        int sum = getSum(r1, c1, r2, c2);
+                        if(sum <= k) ans = max(ans, sum);
+                    }
+                }
+            }
+        }
+
+        return ans;
+    }
+};
