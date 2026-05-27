@@ -1,0 +1,42 @@
+class Solution {
+public:
+    int makeArrayIncreasing(vector<int>& arr1, vector<int>& arr2) {
+        sort(arr2.begin(), arr2.end());
+        arr2.erase(unique(arr2.begin(), arr2.end()), arr2.end());
+        
+        map<int,int> dp;
+        dp[-1] = 0;
+
+        for(int x : arr1) {
+            map<int,int> next_dp;
+
+            for(auto &p : dp) {
+                int prev = p.first;
+                int ops = p.second;
+
+                if(x > prev) {
+                    if(next_dp.count(x) == 0)
+                        next_dp[x] = ops;
+                    else
+                        next_dp[x] = min(next_dp[x], ops);
+                }
+
+                auto it = upper_bound(arr2.begin(), arr2.end(), prev);
+                if(it != arr2.end()) {
+                    int y = *it;
+                    if(next_dp.count(y) == 0)
+                        next_dp[y] = ops + 1;
+                    else
+                        next_dp[y] = min(next_dp[y], ops + 1);
+                }
+            }
+
+            if(next_dp.empty()) return -1;
+            dp = move(next_dp);
+        }
+
+        int ans = INT_MAX;
+        for(auto &p : dp) ans = min(ans, p.second);
+        return ans;
+    }
+};
