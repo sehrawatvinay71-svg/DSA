@@ -1,0 +1,43 @@
+#include<bits/stdc++.h>
+using namespace std;
+class Solution {
+public:
+    int n;
+    int dp[101][3][3];
+    int rec(int x,int y,int firsttaken,vector<int>&nums){
+        if(x==n) return 0;
+        //cachecheck
+        if(dp[x][y][firsttaken]!=-1) return dp[x][y][firsttaken];
+        //transition
+        int ans = 0;
+        if(x==0){
+            ans = max(ans,rec(x+1,1,1,nums)+nums[0]);
+            ans = max(ans,rec(x+1,0,0,nums));
+        }else if(x==n-1){
+            if(firsttaken==0&&y==0){
+                ans = max(ans,rec(x+1,1,0,nums)+nums[n-1]);
+            }
+        }else{
+            if(y==0){
+                ans = max(ans,rec(x+1,1,firsttaken,nums)+nums[x]);
+                ans = max(ans,rec(x+1,0,firsttaken,nums));
+            }else{
+                ans = max(ans,rec(x+1,0,firsttaken,nums));
+            }
+        }
+        //cout<<"x = "<<x<<" y = "<<y<<" ans = "<<ans<<endl;
+        return dp[x][y][firsttaken] =  ans;
+        //save and return
+    }
+    int rob(vector<int>& nums) {
+        n = nums.size();
+        for(int i=0;i<=n;i++){
+            for(int j=0;j<3;j++){
+                for(int k=0;k<3;k++){
+                    dp[i][j][k]=-1;
+                }
+            }
+        }
+        return rec(0,0,0,nums);
+    }
+};
