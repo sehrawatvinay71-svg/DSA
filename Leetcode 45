@@ -1,0 +1,23 @@
+class Solution {
+public:
+    vector<int> arr;
+    int n;
+    int dp[10001];
+    int rec(int x){
+        if(x==n-1) return 0;
+        if(dp[x]!=-1) return dp[x];
+        int ans = 1e9;
+        for(int i=1;i<=arr[x];i++){
+            if((x+i)<(n)){
+                ans = min(rec(x+i)+1,ans);
+            }
+        }
+        return dp[x] = ans;
+    }
+    int jump(vector<int>& nums) {
+        n = nums.size();
+        arr = nums;
+        memset(dp,-1,sizeof(dp));
+        return rec(0);
+    }
+};
