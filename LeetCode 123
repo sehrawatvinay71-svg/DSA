@@ -1,0 +1,36 @@
+class Solution {
+public:
+    int n;
+    vector<int> arr;
+    int dp[100001][3][3];
+    int rec(int i,int bought,int nooftrans){
+        //pruning
+        if(nooftrans>2) return -1e9;
+        //basecase
+        if(i==n){
+            if(bought==0&&nooftrans<=2){
+                return 0;
+            }return -1e9;
+        }
+        //cachecheck
+        if(dp[i][bought][nooftrans]!= -1) return dp[i][bought][nooftrans];
+        //transition
+        int ans = 0;
+        if(bought == 1){
+            ans = max(ans,rec(i+1,0,nooftrans)+arr[i]);
+            ans = max(ans,rec(i+1,bought,nooftrans));
+        }else{
+            ans = max(ans,rec(i+1,1,nooftrans+1)-arr[i]);
+            ans = max(ans,rec(i+1,bought,nooftrans));
+        }
+    
+    //save and return
+        return dp[i][bought][nooftrans] = ans;
+    }
+    int maxProfit(vector<int>& prices) {
+        arr=prices;
+        n = prices.size();
+        memset(dp,-1,sizeof(dp));
+        return rec(0,0,0);
+    }
+};
