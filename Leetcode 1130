@@ -1,0 +1,39 @@
+class Solution {
+public:
+    int n;
+    vector<int> arr;
+    int mx[41][41];
+    int dp[41][41];
+
+    int rec(int l,int r){
+        //pruning
+        //basecase
+        if(l>=r){
+            return 0;
+        }
+        //cache check
+        if(dp[l][r]!=-1) return dp[l][r];
+        //transition
+        int ans = 1e9;
+        for(int i=l;i<r;i++){
+            ans = min(ans , (rec(l,i)+rec(i+1,r)+mx[l][i]*mx[i+1][r]));
+        }
+        //cout<<l<<" "<<r<<" "<<ans<<endl;
+        return dp[l][r] = ans;
+        //save and return
+    }
+
+    int mctFromLeafValues(vector<int>& grr) {
+    n = grr.size();
+    arr = grr;
+    arr.resize(n);
+    memset(dp,-1,sizeof(dp));
+    for(int i = 0; i < n; i++){
+        mx[i][i] = arr[i];
+        for(int j = i+1; j < n; j++){
+            mx[i][j] = max(mx[i][j-1], arr[j]);
+        }
+    }
+    return rec(0,n-1);
+    }
+};
