@@ -1,0 +1,63 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n;
+vector<int> arr;
+pair<int,int> dp[1001][3];
+
+pair<int,int> remax(pair<int,int> ans, pair<int,int> cal){
+    if(cal.first>ans.first){
+        return cal;
+    }else if(cal.first==ans.first){
+        return {cal.first,cal.second+ans.second};
+    }else{
+        return ans;
+    }
+}
+
+pair<int,int> rec(int i,int inc){
+    //pruning
+    //basecase
+    //cache check
+    if(dp[i][inc].first!= -1) return dp[i][inc];
+    //transition
+    pair<int,int> ans = {1,1};
+    for(int j=0;j<i;j++){
+        if(inc==0){
+            if(arr[j]>arr[i]){
+                pair<int,int> cal = {rec(j,0).first+1,rec(j,0).second};
+                ans = remax(ans,cal);
+
+                pair<int,int> bal = {rec(j,1).first+1,rec(j,1).second};
+                ans = remax(ans,bal);
+            }
+        }
+        if(inc == 1){
+            if(arr[j]<arr[i]){
+                pair<int,int> bal = {rec(j,1).first+1,rec(j,1).second};
+                ans = remax(ans,bal);
+            }
+        }
+    }
+    return dp[i][inc] = ans;
+    //save and return
+}
+
+signed main(){
+    cin>>n;
+    arr.resize(n);
+    for(int i=0;i<1001;i++){
+        for(int j=0;j<3;j++){
+            dp[i][j]={-1,-1};
+        }
+    }
+    for(int i=0;i<n;i++) {
+        cin>>arr[i];
+    }
+    pair<int,int> ans = {0,0};
+    for(int i=0;i<n;i++){
+        for(int j=0;j<=1;j++){
+            ans = remax(ans,rec(i,j));
+        }
+    }
+    cout<<ans.first<<" "<<ans.second<<endl;
+}
