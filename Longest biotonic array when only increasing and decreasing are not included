@@ -1,0 +1,46 @@
+class Solution {
+  public:
+    int n;
+    vector<int> arr;
+    int dp[1001][3];
+    
+    int rec(int i,int inc){
+        //pruning
+        //basecase
+        //cache check
+        if(dp[i][inc]!=-1) return dp[i][inc];
+        //transition
+        int ans ;
+        if(inc==0) ans =0;
+        if(inc==1) ans=1;
+        for(int j=0;j<i;j++){
+            if(inc==0){
+                if(arr[j]>arr[i]){
+                    if(rec(j,0)>0)ans=max(ans,1+rec(j,0));
+                    if(rec(j,1)>1)ans = max(ans,1+rec(j,1));
+                }
+            }
+            if(inc == 1){
+                if(arr[j]<arr[i]){
+                    ans = max(ans, 1+rec(j,1));
+                }
+            }
+        }
+        return dp[i][inc] = ans;
+        //save and return
+    }
+    int longestBitonicSequence(int t, vector<int> &nums) {
+        n=t;
+        arr = nums;
+        for(int i=0;i<1001;i++){
+            for(int j=0;j<3;j++){
+                dp[i][j]=-1;
+            }
+        }
+        int ans = 0;
+        for(int i=0;i<n;i++){
+            ans = max(ans,rec(i,0));
+        }
+        return ans;
+    }
+};
