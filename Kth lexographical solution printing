@@ -1,0 +1,98 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n;
+string s;
+int dp[51][7];
+string anss = "";
+
+int rec(int i,int last,int cnta){
+    //pruning
+    //basecase
+    if(i==n){
+        if(cnta==0)return 1;
+        else return 0;
+    }
+    //cache check
+    //transition
+    int ans = 0;
+    if(s[i]!= '?'){
+        if(s[i]=='A'&&last!=1){
+            ans+=rec(i+1,1,1-cnta);
+        }else if(s[i]=='B'&&last!=2){
+            ans+=rec(i+1,2,cnta);
+        }else if(s[i]=='C'&&last!=3){
+            ans+=rec(i+1,3,cnta);
+        }else if(s[i]=='D'&&last!=4){
+            ans+=rec(i+1,4,cnta);
+        }
+    }else{
+        for(int j =1;j<=4;j++){
+            if(last==j) continue;
+            if(j==1)ans+=rec(i+1,j,1 - cnta);
+            else ans+=rec(i+1,j,cnta);
+        }
+    }
+    return ans;
+    //save and return
+}
+
+void generate(int i,int last,int cnta,int k){
+
+    if(i==n){
+        return;
+    }
+    if(s[i]!= '?'){
+        if(s[i]=='A'){
+            anss+='A';
+            generate(i+1,1,1-cnta,k);
+            return;
+        }else if(s[i]=='B'){
+            anss+='B';
+            generate(i+1,2,cnta,k);
+            return;
+        }else if(s[i]=='C'){
+            anss+='C';
+            generate(i+1,3,cnta,k);
+            return;
+        }else if(s[i]=='D'){
+            anss+='D';
+            generate(i+1,4,cnta,k);
+            return;
+        }
+    }else{
+        for(int j =1;j<=4;j++){
+            if(j==last) continue;
+            int newcnta = cnta;
+            char ch;
+            if(j==1){
+                ch = 'A';
+                newcnta = 1- newcnta;
+            }else if(j==2){
+                ch = 'B';
+                newcnta = cnta;
+            }else if(j==3){
+                ch = 'C';
+                newcnta = cnta;
+            }else if(j==4){
+                ch = 'D';
+                newcnta = cnta;
+            }
+            int ways = rec(i+1,j,newcnta);
+            if(ways<k){
+                k-=ways;
+            }else{
+                anss+=ch;
+                generate(i+1,j,newcnta,k);
+                return;
+            }
+        }
+    }
+}
+
+signed main(){
+    cin>>s;
+    n = s.length();
+    cout<<rec(0,-1,0)<<endl;
+    generate(0,-1,0,4);
+    cout<<anss<<endl;
+}
