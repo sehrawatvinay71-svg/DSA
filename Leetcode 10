@@ -1,0 +1,45 @@
+class Solution {
+public:
+    string s1,s2;
+    int n,m;
+    int dp[21][21];
+
+    bool rec(int i,int j){
+        //pruning
+        //basecase
+        if(j==m){
+            return i==n;
+        }
+        //cache check
+        if(dp[i][j]!=-1) return dp[i][j];
+        //transition
+        bool ans = false;
+        if(j+1<m && s2[j+1]=='*'){
+            ans = rec(i,j+2);
+
+            if(i<n && (s1[i]==s2[j] || s2[j]=='.')){
+                ans = ans || rec(i+1,j);
+            }
+        }
+        else{
+            if(i<n && (s1[i]==s2[j] || s2[j]=='.')){
+                ans = ans || rec(i+1,j+1);
+            }else{
+                ans = false;
+            }
+        }
+        return dp[i][j] = ans;
+        //save and return
+    }
+
+    bool isMatch(string s, string p) {
+        s1 = s;
+        s2 = p;
+        n = s1.length();
+        m = s2.length();
+
+        memset(dp, -1, sizeof(dp));
+
+        return rec(0, 0);
+    }
+};
