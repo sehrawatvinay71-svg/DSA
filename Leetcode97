@@ -1,0 +1,35 @@
+class Solution {
+public:
+    int n,m,l;
+    string s1,s2,s3;
+    int dp[101][101];
+
+    bool rec(int i,int j){
+        //pruning
+        //basecase
+        if(i+j==l){
+            if(i==n&&j==m) return true;
+        }
+        //cache check
+        if(dp[i][j] !=-1) return dp[i][j];
+        //transition
+        int ans = false;
+        if(i<n&&s1[i]==s3[i+j]){
+            ans = ans||rec(i+1,j);
+        }if(j<m&&s2[j]==s3[i+j]){
+            ans = ans||rec(i,j+1);
+        }
+        //save and return
+        return dp[i][j] = ans;
+    }
+    bool isInterleave(string s4, string s5, string s6) {
+        s1 = s4;
+        s2 = s5;
+        s3 = s6;
+        n= s1.length();
+        m= s2.length();
+        l= s3.length();
+        memset(dp,-1,sizeof(dp));
+        return rec(0,0);
+    }
+};
