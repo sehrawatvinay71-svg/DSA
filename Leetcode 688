@@ -1,0 +1,44 @@
+class Solution {
+public:
+    int n,mov,row,column;
+    int dx[8] = {-2,-2,-1,-1,1,1,2,2};
+    int dy[8] = {-1,1,-2,2,-2,2,-1,1};
+
+    double dp[26][26][101];
+
+    double rec(int i,int j,int movesleft){
+        //pruning
+        if(i<0||j<0||i>=n||j>=n){
+            return 0.0;
+        }
+        //basecase
+        if(movesleft==0){
+            return 1.0;
+        }
+        //cache check
+        if(dp[i][j][movesleft]!=-1.0) return dp[i][j][movesleft];
+        //transition
+        double ans = 0.0;
+        for(int k =0;k<8;k++){
+            int nx = i+dx[k];
+            int ny = j+dy[k];
+            ans+=rec(nx,ny,movesleft-1)/8.0;
+        }
+        return dp[i][j][movesleft]=ans;
+        //save and return
+    }
+    double knightProbability(int t, int k, int rows, int columns) {
+        n = t;
+        mov = k; 
+        row = rows;
+        column = columns;
+        for(int i=0;i<26;i++){
+            for(int j=0;j<26;j++){
+                for(int k=0;k<101;k++){
+                    dp[i][j][k]=-1.0;
+                }
+            }
+        }
+        return rec(row,column,mov);
+    }
+};
