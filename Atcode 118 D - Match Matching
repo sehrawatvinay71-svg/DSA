@@ -1,0 +1,57 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int n,m;
+
+int dx[10] = {0,2,5,5,4,5,6,3,7,6};
+
+vector<int> arr;
+
+int dp[100001];
+
+int rec(int leftm){
+    //pruning
+    if(leftm==1) return -1e18;
+    //basecase
+    if(leftm==0){
+        return 0;
+    }
+    //cache check
+    if(dp[leftm]!=-1) return dp[leftm];
+    //transition
+    int ans = -1e18;
+    for(int j=m-1;j>=0;j--){
+        if(leftm>=dx[arr[j]]){
+            ans = max(ans, 1 + rec(leftm - dx[arr[j]]));
+        }
+        //ans = max(ans,rec(leftm));
+    }
+    return dp[leftm] = ans;
+    //save and return
+}
+
+signed main(){
+    cin>>n>>m;
+    arr.resize(m);
+    memset(dp,-1,sizeof(dp));
+    for(int i=0;i<m;i++){
+        cin>>arr[i];
+    }
+
+    sort(arr.begin(),arr.end(),greater<int>());
+    string ans = "";
+    int leftm = n;
+    while(leftm > 0){
+        for(int j = 0; j < m; j++){
+            int digit = arr[j];
+            int cost = dx[digit];
+
+            if(leftm >= cost && rec(leftm) == 1 + rec(leftm - cost)){
+                ans += char('0' + digit);
+                leftm -= cost;
+                break;
+            }
+        }
+    }
+    cout<<ans<<endl;
+}
