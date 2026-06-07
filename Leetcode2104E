@@ -1,0 +1,78 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int n, k;
+int nexta[1000002][27];
+int dp[1000002];
+string s;
+int q;
+
+int rec(int pos){
+    // pruning
+    if(pos == n) return 1;
+
+    // cache check
+    if(dp[pos] != -1) return dp[pos];
+
+    // transition
+    int ans = 1e9;
+
+    for(int ch = 0; ch < k; ch++){
+        int nxt = nexta[pos][ch];
+
+        if(nxt == n){
+            ans = min(ans, 1);
+        }else{
+            ans = min(ans, 1 + rec(nxt + 1));
+        }
+    }
+
+    // save and return
+    return dp[pos] = ans;
+}
+
+signed main(){
+    cin >> n >> k;
+    cin >> s;
+    cin >> q;
+
+    for(int ch = 0; ch < k; ch++){
+        nexta[n][ch] = n;
+    }
+
+    for(int i = n - 1; i >= 0; i--){
+        for(int ch = 0; ch < k; ch++){
+            nexta[i][ch] = nexta[i + 1][ch];
+        }
+
+        int alphaidx = s[i] - 'a';
+        nexta[i][alphaidx] = i;
+    }
+
+    memset(dp, -1, sizeof(dp));
+
+    while(q--){
+        string d;
+        cin >> d;
+
+        int pos = 0;
+        bool hai = true;
+
+        for(int i = 0; i < d.length(); i++){
+            int ch = d[i] - 'a';
+
+            if(nexta[pos][ch] == n){
+                hai = false;
+                break;
+            }
+
+            pos = nexta[pos][ch] + 1;
+        }
+
+        if(hai == false){
+            cout << 0 << endl;
+        }else{
+            cout << rec(pos) << endl;
+        }
+    }
+}
