@@ -1,0 +1,33 @@
+class Solution {
+public:
+    int longestValidParentheses(string s) {
+        vector<int> arr;
+        int n=s.length();
+        arr.resize(n);
+        stack<int> st;
+        for(int i=0;i<n;i++){
+            if(s[i]=='('){
+                st.push(i);
+            }else{
+                if(!st.empty()&&s[i]==')'){
+                    int idx = st.top();
+                    st.pop();
+                    arr[idx] = 1;
+                    arr[i] = 1;
+                }
+            }
+        }
+        int count  =0;
+        int ans = 0;
+        for(auto x: arr){
+            if(x==0){
+                ans = max(ans,count);
+                count=0;
+            }else if(x==1){
+                count++;
+            }
+        }
+        ans = max(ans,count);
+        return ans;
+    }
+};
