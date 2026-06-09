@@ -1,0 +1,69 @@
+class Solution {
+public:
+    long long C[65][65];
+    int depth[65];
+
+    void buildCombination() {
+        for(int i = 0; i < 65; i++) {
+            C[i][0] = 1;
+            C[i][i] = 1;
+
+            for(int j = 1; j < i; j++) {
+                C[i][j] = C[i-1][j-1] + C[i-1][j];
+            }
+        }
+    }
+
+    int getDepth(int x) {
+        if(x == 1) return 0;
+
+        int cnt = __builtin_popcount(x);
+        return 1 + getDepth(cnt);
+    }
+
+    long long countWithSetBits(long long n, int need) {
+        long long ans = 0;
+        int used = 0;
+
+        for(int bit = 60; bit >= 0; bit--) {
+            if((n >> bit) & 1LL) {
+                int remaining = bit;
+                int required = need - used;
+
+                if(required >= 0 && required <= remaining) {
+                    ans += C[remaining][required];
+                }
+
+                used++;
+            }
+        }
+
+        if(used == need) ans++;
+
+        return ans;
+    }
+
+    long long popcountDepth(long long n, int k) {
+        buildCombination();
+
+        for(int i = 1; i < 65; i++) {
+            depth[i] = getDepth(i);
+        }
+
+        if(k == 0) {
+            return 1;
+        }
+
+        long long ans = 0;
+
+        for(int c = 1; c <= 60; c++) {
+            if(depth[c] == k - 1) {
+                ans += countWithSetBits(n, c);
+            }
+        }
+
+        if(k == 1) ans--;
+
+        return ans;
+    }
+};
