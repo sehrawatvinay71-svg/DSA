@@ -1,0 +1,56 @@
+class Solution {
+public:
+    int n,m;
+    string s,p;
+    int dp[31][31][31];
+
+    bool rec(int i,int j,int len){
+        //pruning
+        //base case
+        bool same = true;
+        for(int x=0;x<len;x++){
+            if(s[i+x]!=p[j+x]){
+                same=false;
+                break;
+            }
+        }
+        if(same==true){
+            return true;
+        }
+        if(len==1){
+            return false;
+        }
+        //cache check
+        if(dp[i][j][len] !=-1) return dp[i][j][len] ;
+        //transition
+        bool ans = false;
+        for(int k=1;k<len;k++){
+            bool nonswap = rec(i,j,k)&&rec(i+k,j+k,len-k);
+            if(nonswap==true){
+                ans = true;
+                break;
+            }
+
+            bool swaps = rec(i+k,j,len-k)&&rec(i,j+len-k,k);
+            if(swaps==true){
+                ans = true;
+                break;
+            }
+        }
+        //save and return
+        return dp[i][j][len] = ans;
+    }
+    bool isScramble(string a, string b) {
+        if(a.size() != b.size()) {
+            return false;
+        }
+
+        s = a;
+        p = b;
+
+        memset(dp, -1, sizeof(dp));
+        n = s.length();
+        m = p.length();
+        return rec(0,0,n);
+    }
+};
