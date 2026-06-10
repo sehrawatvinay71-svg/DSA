@@ -1,0 +1,36 @@
+class Solution {
+public:
+    int n;
+    string s;
+    int dp[101];
+
+    int rec(int i){
+        //pruning
+        //basecase
+        if(i==n){
+            return 1;
+        }
+        //cachecheck
+        if(dp[i]!=-1) return dp[i];
+        //transition
+        int ans = 0;
+        if(i<n-1 && s[i]!='0'){
+            int tensplace = s[i]-'0';
+            int onesplace = s[i+1] - '0';
+            int noo = tensplace*10 + onesplace;
+            if(noo<27) ans += rec(i+2);
+        }
+        if(i<n&&s[i]!='0'){
+            ans += rec(i+1);
+        }
+        return dp[i] = ans;
+        //save and return
+    }
+    int numDecodings(string t) {
+        s = t;
+        memset(dp,-1,sizeof(dp));
+        n = s.length();
+        return rec(0);
+
+    }
+};
