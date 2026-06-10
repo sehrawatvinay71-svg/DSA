@@ -1,0 +1,28 @@
+class Solution {
+public:
+    int n;
+    int dp[20][20];
+
+    int rec(int l,int r){
+        //pruning
+        //basecase
+        if(l>=r){
+            return 1;
+        }
+        //cachecheck
+        if(dp[l][r]!=-1) return dp[l][r];
+        //transition
+        int ans = 0;
+        for(int j=l;j<=r;j++){
+            int root = j;
+            ans += rec(l,j-1)*rec(j+1,r);
+        }
+        //save and return
+        return dp[l][r] = ans;
+    }
+    int numTrees(int t) {
+        n = t;
+        memset(dp,-1,sizeof(dp));
+        return rec(1,n);
+    }
+};
