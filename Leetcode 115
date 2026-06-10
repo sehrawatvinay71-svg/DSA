@@ -1,0 +1,32 @@
+class Solution {
+public:
+    string s1,s2;
+    int n,m;
+    int dp[1001][1001];
+
+    int rec(int i,int j){
+        //pruning
+        if(i==n&&j!=m){
+            return 0;
+        }
+        //basecase
+        if(j==m){
+            return 1;
+        }
+        //cachecheck
+        if(dp[i][j]!=-1) return dp[i][j];
+        //transition
+        int ans = 0;
+        if(s1[i]==s2[j])ans += rec(i+1,j+1);
+        ans += rec(i+1,j);
+        //save and return
+        return dp[i][j] = ans;
+    }
+    int numDistinct(string s, string t) {
+        s1 = s,s2=t;
+        n = s1.length();
+        m = s2.length();
+        memset(dp,-1,sizeof(dp));
+        return rec(0,0);
+    }
+};
