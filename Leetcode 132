@@ -1,0 +1,41 @@
+class Solution {
+public:
+    string s;
+    int n;
+    int dp1[2001];
+    int dp2[2001][2001];
+
+    bool is_palindrome(int l,int r){
+        if(l>=r) return true;
+        if(dp2[l][r]!=-1) return dp2[l][r];
+        int ans = 0;
+        if(is_palindrome(l+1,r-1) && (s[l]==s[r])) ans=1;
+        return dp2[l][r]=ans;
+    }
+
+    int rec(int i){
+        //pruning
+        //base case
+        if(i==-1){
+            return -1;
+        }
+        //cache check
+        if(dp1[i]!=-1) return dp1[i];
+        //transition
+        int ans = 1e9;
+        for(int mid=0;mid<=i;mid++){
+            if(is_palindrome(mid,i)){
+                ans = min(ans,1+rec(mid-1));
+            }
+        }
+        return dp1[i]=ans;
+        //saveand return
+    }
+    int minCut(string t) {
+        s=t;
+        memset(dp1,-1,sizeof(dp1));
+        memset(dp2,-1,sizeof(dp2));
+        n = s.length();
+        return rec(n-1);
+    }
+};
