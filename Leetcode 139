@@ -1,0 +1,38 @@
+class Solution {
+public:
+    string s;
+    int n;
+    int d;
+    map<string,int> mp;
+    int dp[301];
+
+    bool rec(int i){
+        //pruning
+        //base case
+        if(i<0){
+            return true;
+        }
+        //cache check
+        if(dp[i]!=-1) return dp[i];
+        //transition
+        bool ans = false;
+        for(int mid=0;mid<=i;mid++){
+            if(mp[s.substr(mid,i-mid+1)]){
+                ans = ans||rec(mid-1);
+            }
+        }
+        return dp[i] = ans;
+        //save and return
+    }
+    bool wordBreak(string t, vector<string>& wordDict) {
+        s=t;
+        n = wordDict.size();
+        d = s.length();
+        memset(dp,-1,sizeof(dp));
+        vector<string> arr = wordDict;
+        for(int i=0;i<n;i++){
+            mp[arr[i]]++;
+        }
+        return rec(d-1);
+    }
+};
