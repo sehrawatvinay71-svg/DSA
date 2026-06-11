@@ -1,0 +1,33 @@
+class Solution {
+public:
+    int n,m;
+    vector<vector<int>> arr;
+    int dp[201][201];
+    int dp1[201][201];
+
+    int rec(int i,int j){
+        //pruning
+        if(i>=n||j>=m) return 1e9;
+        //base case
+        if(i==n-1&&j==m-1){
+            return max(1,1 - arr[i][j]);
+        }
+        //cache check
+        if(dp1[i][j]==1) return dp[i][j];
+        //transition
+        int ans = 1e9;
+        ans = min(ans,max(1,rec(i+1,j)-arr[i][j]));
+        ans = min(ans,max(1, rec(i,j+1)-arr[i][j]));
+        dp1[i][j]=1;
+        return dp[i][j]=ans;
+        //save and return
+    }
+    int calculateMinimumHP(vector<vector<int>>& dungeon) {
+        n = dungeon.size();
+        m = dungeon[0].size();
+        arr = dungeon;
+        memset(dp,-1,sizeof(dp));
+        memset(dp1,0,sizeof(dp1));
+        return rec(0,0);
+    }
+};
