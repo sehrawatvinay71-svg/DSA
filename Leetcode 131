@@ -1,0 +1,38 @@
+class Solution {
+public:
+    string s;
+    int n;
+    vector<vector<string>> arr;
+    vector<string> med;
+    string medi = "";
+
+    bool is_palindrome(int l,int r){
+        if(l>=r) return true;
+        return is_palindrome(l+1,r-1) && (s[l]==s[r]);
+    }
+
+    void rec(int i){
+        //pruning
+        //base case
+        if(i==n){
+            arr.push_back(med);
+            return;
+        }
+        //cache check
+        //transition
+        for(int mid=i;mid<n;mid++){
+            if(is_palindrome(i,mid)){
+                med.push_back(s.substr(i, mid-i+1));
+                rec(mid+1);
+                med.pop_back();
+            }
+        }
+        //saveand return
+    }
+        vector<vector<string>> partition(string t) {
+            s = t;
+            n = s.length();
+            rec(0);
+            return arr;
+    }
+};
