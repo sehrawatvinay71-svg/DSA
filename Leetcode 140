@@ -1,0 +1,44 @@
+class Solution {
+public:
+    string s;
+    int n;
+    int d;
+    map<string,int> mp;
+    vector<string> final;
+    string medi = "";
+
+    void rec(int i){
+        //pruning
+        //base case
+        if(i == d){
+            if(!medi.empty() && medi.back() == ' ')
+                medi.pop_back();
+            final.push_back(medi);
+            return;
+        }
+        //cache check
+        //transition
+        for(int j=i;j<=d;j++){
+            string word = s.substr(i,j-i+1);
+            if(mp[word]){
+                string old = medi;
+                medi+=word;
+                medi+=" ";
+                rec(j+1);
+                medi=old;
+            }
+        }
+        //save and return
+    }
+    vector<string> wordBreak(string t, vector<string>& wordDict) {
+        s=t;
+        n = wordDict.size();
+        d = s.length();
+        vector<string> arr = wordDict;
+        for(int i=0;i<n;i++){
+            mp[arr[i]]++;
+        }
+        rec(0);
+        return final;
+    }
+};
