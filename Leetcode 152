@@ -1,0 +1,37 @@
+class Solution {
+public:
+    int n;
+    vector<int> arr;
+    pair<int,int> dp[20001];
+    int dp1[20001];
+
+    pair<int,int> rec(int i){
+        //pruning
+        //base case
+        if(i<0){
+            return {1,1};
+        }
+        //cache check
+        if(dp1[i]!=0) return dp[i];
+        //transition
+        int maxending = arr[i];
+        int minending = arr[i];
+        maxending = max(maxending,rec(i-1).first*arr[i]);
+        maxending = max(maxending,rec(i-1).second*arr[i]);
+        minending = min(minending,arr[i]*rec(i-1).second);
+        minending = min(minending,arr[i]*rec(i-1).first);
+        //save and return
+        dp1[i]=1;
+        return dp[i] = {maxending,minending};
+    }
+    int maxProduct(vector<int>& nums) {
+        n = nums.size();
+        arr = nums;
+        memset(dp1,0,sizeof(dp1));
+        int ans=-1e9;
+        for(int i=0;i<n;i++){
+            ans = max(ans,rec(i).first);
+        }
+        return ans;
+    }
+};
