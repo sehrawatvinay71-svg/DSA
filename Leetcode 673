@@ -1,0 +1,51 @@
+class Solution {
+public:
+    int n;
+    vector<int> arr;
+    pair<int,int> dp[20001];
+    int dp1[20001];
+
+    pair<int,int> remax(pair<int,int> ans,pair<int,int> pos){
+        if(pos.first>ans.first){
+            return pos;
+        }else if(pos.first==ans.first){
+            return {pos.first,ans.second+pos.second};
+        }else{
+            return ans;
+        }
+    }
+
+    pair<int,int> rec(int i){
+        //pruning
+        //base case
+        //cache check
+        if(dp1[i]) return dp[i];
+        //transition
+        pair<int,int> ans = {1,1};
+        for(int j=0;j<i;j++){
+            if(arr[j]<arr[i]){
+                pair<int,int> pos = {1+rec(j).first,rec(j).second};
+                ans = remax(ans,pos);
+            }
+        }
+        //save and return
+        dp1[i] = 1;
+        return dp[i] = ans;
+    }
+    int findNumberOfLIS(vector<int>& nums) {
+        n = nums.size();
+        arr = nums;
+        memset(dp1,0,sizeof(dp1));
+        int ans = 0;
+        int count = 0;
+        for(int i=0;i<n;i++){
+            if(rec(i).first>ans){
+                ans = rec(i).first;
+                count = rec(i).second;
+            }else if(rec(i).first == ans){
+                count += rec(i).second;
+            }
+        }
+        return count;
+    }
+};
