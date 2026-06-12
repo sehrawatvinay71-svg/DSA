@@ -1,0 +1,48 @@
+class Solution {
+public:
+    int n;
+    vector<int> arr;
+    vector<int> dp[1001][1001];
+    int dp1[1001][1001];
+
+    vector<int> rec(int i, int last){
+
+        if(i == n){
+            return {};
+        }
+
+        if(last != -1 && dp1[i][last]){
+            return dp[i][last];
+        }
+
+
+        vector<int> ans = rec(i + 1, last);
+
+
+        if(last == -1 || arr[i] % arr[last] == 0){
+            vector<int> take = rec(i + 1, i);
+            take.insert(take.begin(), arr[i]);
+
+            if(take.size() > ans.size()){
+                ans = take;
+            }
+        }
+
+        if(last != -1){
+            dp1[i][last] = 1;
+            dp[i][last] = ans;
+        }
+
+        return ans;
+    }
+
+    vector<int> largestDivisibleSubset(vector<int>& nums) {
+        n = nums.size();
+        arr = nums;
+
+        sort(arr.begin(), arr.end());
+        memset(dp1, 0, sizeof(dp1));
+
+        return rec(0, -1);
+    }
+};
