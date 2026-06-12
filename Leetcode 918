@@ -1,0 +1,43 @@
+class Solution {
+public:
+    int n;
+    vector<int> arr;
+    pair<int,int> dp[30001];
+    int dp1[30001];
+
+    pair<int,int> rec(int i){
+        //pruning
+        //base case
+        if(i<0){
+            return {0,0};
+        }
+        //cache check
+        if(dp1[i]) return dp[i];
+        //transition
+        int minsubarray = arr[i];
+        int maxsubarray = arr[i];
+        minsubarray = min(minsubarray,arr[i]+rec(i-1).second);
+        maxsubarray = max(maxsubarray,arr[i]+rec(i-1).first);
+        //save and return
+        dp1[i] = 1;
+        return dp[i] = {maxsubarray,minsubarray};
+    }
+    int maxSubarraySumCircular(vector<int>& nums) {
+        n = nums.size();
+        arr = nums;
+        memset(dp1,0,sizeof(dp1));
+        int minsubarray = 1e9;
+        int maxsubarray = -1e9;
+        int total = 0;
+        for(int i=0;i<n;i++){
+            total +=arr[i];
+            minsubarray = min(minsubarray,rec(i).second);
+            maxsubarray = max(maxsubarray,rec(i).first);
+        }
+        if(maxsubarray<0){
+            return maxsubarray;
+        }else{
+            return max(maxsubarray,total-minsubarray);
+        }
+    }
+};
