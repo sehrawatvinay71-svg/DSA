@@ -1,0 +1,33 @@
+class Solution {
+public:
+    int maxResult(vector<int>& nums, int k) {
+        int n = nums.size();
+
+        vector<int> dp(n);
+        deque<int> dq;
+
+        dp[0] = nums[0];
+        dq.push_back(0);
+
+        for (int i = 1; i < n; i++) {
+
+            // Window [i-k, i-1] se bahar wale indexes remove
+            while (!dq.empty() && dq.front() < i - k) {
+                dq.pop_front();
+            }
+
+            // Front par maximum dp wala index hai
+            dp[i] = nums[i] + dp[dq.front()];
+
+            // Current dp[i] se smaller/equal dp values remove
+            while (!dq.empty() && dp[dq.back()] <= dp[i]) {
+                dq.pop_back();
+            }
+
+            // Current index add
+            dq.push_back(i);
+        }
+
+        return dp[n - 1];
+    }
+};
