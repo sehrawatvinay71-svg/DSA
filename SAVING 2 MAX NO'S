@@ -1,0 +1,117 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int n,q;
+int arr[200200];
+
+
+struct node{
+    int max1,max2;
+    node(){
+        max1 = 0;
+        max2 = 0;
+    }
+};
+node seg_tree[800800];
+
+node merge(node a,node b){
+    node res;
+
+    vector<int> temp = {
+        a.max1,
+        a.max2,
+        b.max1,
+        b.max2
+    };
+
+    sort(temp.rbegin(),temp.rend());
+
+    res.max1 = temp[0];
+    res.max2 = temp[1];
+
+    return res;
+}
+
+node make_node(int val){
+    node res;
+    res.max1 = val;
+    res.max2 = 0;
+    return res;
+}
+
+void build(int idx,int l,int r){
+    if(l==r){
+        seg_tree[idx] = make_node(arr[l]);
+        return;
+    }
+
+    int mid = (l+r)/2;
+
+    build(2*idx,l,mid);
+    build(2*idx+1,mid+1,r);
+
+    seg_tree[idx] =
+        merge(seg_tree[2*idx],seg_tree[2*idx+1]);
+}
+
+void update(int idx,int l,int r,int pos,int val){
+    if(l==r){
+        arr[pos] = val;
+        seg_tree[idx] = make_node(val);
+        return;
+    }
+
+    int mid = (l+r)/2;
+
+    if(pos<=mid){
+        update(2*idx,l,mid,pos,val);
+    }else{
+        update(2*idx+1,mid+1,r,pos,val);
+    }
+
+    seg_tree[idx] =
+        merge(seg_tree[2*idx],seg_tree[2*idx+1]);
+}
+
+
+node query(int idx,int l,int r,int lq,int rq){
+    // No overlap
+    if(r<lq || rq<l){
+        return node();
+    }
+
+    // Complete overlap
+    if(lq<=l && r<=rq){
+        return seg_tree[idx];
+    }
+
+    int mid = (l+r)/2;
+
+    return merge(
+        query(2*idx,l,mid,lq,rq),
+        query(2*idx+1,mid+1,r,lq,rq)
+    );
+}
+
+
+
+
+signed main(){
+    cin>>n;
+    for(int i=1;i<=n;i++){
+        cin>>arr[i];
+    }
+    cin>>q;
+    build(1,1,n);
+    while(q--){
+        char c;
+        cin>>c;
+        int a,b;
+        cin>>a>>b;
+        if(c=='U') update(1,1,n,a,b);
+        if(c=='Q'){ 
+            node ans = query(1,1,n,a,b);
+            cout<<ans.max1+ans.max2<<'\n';
+        }
+    }
+}
