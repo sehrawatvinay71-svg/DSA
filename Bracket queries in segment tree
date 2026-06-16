@@ -1,0 +1,79 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int n,q;
+string s;
+
+struct node{
+    int open,close,all;
+    node(){
+        open = 0;
+        close = 0;
+        all = 0;
+    }
+};
+
+node seg_tree[4000400];
+
+node make_node(char x){
+    node ans;
+    if(x=='('){
+        ans.open = 1;
+        ans.close = 0;
+        ans.all = 0;
+    }else{
+        ans.open = 0;
+        ans.close = 1;
+        ans.all = 0;
+    }
+    return ans;
+}
+
+node merge(node a,node b){
+    node ans;
+    ans.all = min(a.open , b.close)*2 + a.all+b.all;
+    ans.open = a.open - min(a.open , b.close) + b.open;
+    ans.close = a.close + b.close - min(a.open,b.close);
+    return ans;
+}
+
+void build(int idx, int l,int r){
+    if(l==r){
+        seg_tree[idx] = make_node(s[l]);
+        return;
+    }
+    int mid = (l+r)/2;
+    build(2*idx,l,mid);
+    build(2*idx+1,mid+1,r);
+    seg_tree[idx] = merge(seg_tree[2*idx],seg_tree[2*idx+1]);
+}
+
+node query(int idx,int l,int r,int lq,int rq){
+    if(r<lq||rq<l){
+        return node();
+    }
+    if(l>=lq&&r<=rq){
+        return seg_tree[idx];
+    }
+    int mid = (l+r)/2;
+    return merge(query(2*idx,l,mid,lq,rq),query(2*idx+1,mid+1,r,lq,rq));
+}
+
+signed main(){
+    cin>>s;
+    n = s.length();
+    build(1,0,n-1);
+    // for(int i=1;i<4*n;i++){
+    //     cout<<"i : "<<i<<" open : "<<seg_tree[i].open<<" close : "<<seg_tree[i].close<<" all : "<<seg_tree[i].all<<endl;
+    // }
+    cin>>q;
+    while(q--){
+        int a,b;
+        cin>>a>>b;
+        a--;
+        b--;
+        node ans = query(1,0,n-1,a,b);
+        cout<<ans.all<<endl;
+    }
+
+}
