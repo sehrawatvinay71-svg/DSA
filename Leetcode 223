@@ -1,0 +1,59 @@
+class Solution {
+public:
+    string digits;
+
+    int dp[11][2][11];
+    int visited[11][2][11];
+
+    int rec(int pos, int tight, int countOnes) {
+        // base case
+        if (pos == digits.size()) {
+            return countOnes;
+        }
+
+        // cache check
+        if (visited[pos][tight][countOnes]) {
+            return dp[pos][tight][countOnes];
+        }
+
+        // transition
+        int limit;
+
+        if (tight == 1) {
+            limit = digits[pos] - '0';
+        } else {
+            limit = 9;
+        }
+
+        int ans = 0;
+
+        for (int digit = 0; digit <= limit; digit++) {
+            int newTight = tight && (digit == limit);
+
+            int newCountOnes = countOnes;
+
+            if (digit == 1) {
+                newCountOnes++;
+            }
+
+            ans += rec(
+                pos + 1,
+                newTight,
+                newCountOnes
+            );
+        }
+
+        // save and return
+        visited[pos][tight][countOnes] = 1;
+
+        return dp[pos][tight][countOnes] = ans;
+    }
+
+    int countDigitOne(int n) {
+        digits = to_string(n);
+
+        memset(visited, 0, sizeof(visited));
+
+        return rec(0, 1, 0);
+    }
+};
