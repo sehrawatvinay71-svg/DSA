@@ -1,0 +1,36 @@
+class Solution {
+public:
+    int nthUglyNumber(int n) {
+        vector<int> dp(n);
+
+        dp[0] = 1;
+
+        int p2 = 0;
+        int p3 = 0;
+        int p5 = 0;
+
+        for (int i = 1; i < n; i++) {
+            int multiplyBy2 = dp[p2] * 2;
+            int multiplyBy3 = dp[p3] * 3;
+            int multiplyBy5 = dp[p5] * 5;
+
+            dp[i] = min({multiplyBy2, multiplyBy3, multiplyBy5});
+
+            // Separate if conditions are necessary
+            // because same number can come from multiple pointers
+            if (dp[i] == multiplyBy2) {
+                p2++;
+            }
+
+            if (dp[i] == multiplyBy3) {
+                p3++;
+            }
+
+            if (dp[i] == multiplyBy5) {
+                p5++;
+            }
+        }
+
+        return dp[n - 1];
+    }
+};
