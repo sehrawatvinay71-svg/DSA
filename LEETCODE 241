@@ -1,0 +1,61 @@
+class Solution {
+public:
+    string s;
+
+    vector<int> dp[21][21];
+    int visited[21][21];
+
+    vector<int> rec(int l, int r) {
+        // cache check
+        if (visited[l][r]) {
+            return dp[l][r];
+        }
+
+        // transition
+        vector<int> ans;
+        bool operatorFound = false;
+
+        for (int mid = l; mid <= r; mid++) {
+            if (s[mid] == '+' || s[mid] == '-' || s[mid] == '*') {
+                operatorFound = true;
+
+                vector<int> leftAnswers = rec(l, mid - 1);
+                vector<int> rightAnswers = rec(mid + 1, r);
+
+                for (int left : leftAnswers) {
+                    for (int right : rightAnswers) {
+                        if (s[mid] == '+') {
+                            ans.push_back(left + right);
+                        } 
+                        else if (s[mid] == '-') {
+                            ans.push_back(left - right);
+                        } 
+                        else {
+                            ans.push_back(left * right);
+                        }
+                    }
+                }
+            }
+        }
+
+        // base case
+        // substring mein koi operator nahi hai,
+        // matlab poori substring ek number hai
+        if (operatorFound == false) {
+            int number = stoi(s.substr(l, r - l + 1));
+            ans.push_back(number);
+        }
+
+        // save and return
+        visited[l][r] = 1;
+        return dp[l][r] = ans;
+    }
+
+    vector<int> diffWaysToCompute(string expression) {
+        s = expression;
+
+        memset(visited, 0, sizeof(visited));
+
+        return rec(0, s.size() - 1);
+    }
+};
