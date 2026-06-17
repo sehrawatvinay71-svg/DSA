@@ -1,0 +1,31 @@
+class Solution {
+public:
+    int dp[10001];
+
+    int rec(int rem) {
+        // base case
+        if (rem == 0) {
+            return 0;
+        }
+
+        // cache check
+        if (dp[rem] != -1) {
+            return dp[rem];
+        }
+
+        // transition
+        int ans = 1e9;
+
+        for (int x = 1; x * x <= rem; x++) {
+            ans = min(ans, 1 + rec(rem - x * x));
+        }
+
+        // save and return
+        return dp[rem] = ans;
+    }
+
+    int numSquares(int n) {
+        memset(dp, -1, sizeof(dp));
+        return rec(n);
+    }
+};
