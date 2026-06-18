@@ -1,0 +1,34 @@
+class Solution {
+public:
+    int dp[59];
+
+    int rec(int n) {
+        // base case
+        if (n == 1) {
+            return 1;
+        }
+
+        // cache check
+        if (dp[n] != -1) {
+            return dp[n];
+        }
+
+        // transition
+        int ans = 0;
+
+        for (int firstPart = 1; firstPart < n; firstPart++) {
+            int remaining = n - firstPart;
+
+            ans = max(ans,
+                      firstPart * max(remaining, rec(remaining)));
+        }
+
+        // save and return
+        return dp[n] = ans;
+    }
+
+    int integerBreak(int n) {
+        memset(dp, -1, sizeof(dp));
+        return rec(n);
+    }
+};
