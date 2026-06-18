@@ -1,0 +1,52 @@
+class Solution {
+public:
+    int n, m;
+    vector<vector<int>> arr;
+    int dp[201][201];
+
+    int dx[4] = {-1, 1, 0, 0};
+    int dy[4] = {0, 0, -1, 1};
+
+    int rec(int i, int j) {
+        // cache check
+        if (dp[i][j] != -1) {
+            return dp[i][j];
+        }
+
+        // transition
+        int ans = 1;
+
+        for (int k = 0; k < 4; k++) {
+            int ni = i + dx[k];
+            int nj = j + dy[k];
+
+            if (ni >= 0 && ni < n &&
+                nj >= 0 && nj < m &&
+                arr[ni][nj] > arr[i][j]) {
+
+                ans = max(ans, 1 + rec(ni, nj));
+            }
+        }
+
+        // save and return
+        return dp[i][j] = ans;
+    }
+
+    int longestIncreasingPath(vector<vector<int>>& matrix) {
+        arr = matrix;
+        n = arr.size();
+        m = arr[0].size();
+
+        memset(dp, -1, sizeof(dp));
+
+        int ans = 0;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                ans = max(ans, rec(i, j));
+            }
+        }
+
+        return ans;
+    }
+};
