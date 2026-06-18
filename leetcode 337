@@ -1,0 +1,26 @@
+class Solution {
+public:
+    pair<int, int> rec(TreeNode* root) {
+        // base case
+        if (root == NULL) {
+            return {0, 0};
+        }
+
+        pair<int, int> left = rec(root->left);
+        pair<int, int> right = rec(root->right);
+
+        // root ko rob karenge
+        int rob = root->val + left.second + right.second;
+
+        // root ko rob nahi karenge
+        int notRob = max(left.first, left.second)
+                   + max(right.first, right.second);
+
+        return {rob, notRob};
+    }
+
+    int rob(TreeNode* root) {
+        pair<int, int> ans = rec(root);
+        return max(ans.first, ans.second);
+    }
+};
