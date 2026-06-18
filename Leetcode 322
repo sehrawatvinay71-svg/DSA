@@ -1,0 +1,41 @@
+class Solution {
+public:
+    int n;
+    vector<int> coins;
+    int dp[10001];
+
+    int rec(int amount) {
+        // base case
+        if (amount == 0) {
+            return 0;
+        }
+
+        if (amount < 0) {
+            return 1e9;
+        }
+
+        // cache check
+        if (dp[amount] != -1) {
+            return dp[amount];
+        }
+
+        // transition
+        int ans = 1e9;
+
+        for (int coin : coins) {
+            ans = min(ans, 1 + rec(amount - coin));
+        }
+
+        // save and return
+        return dp[amount] = ans;
+    }
+
+    int coinChange(vector<int>& givenCoins, int amount) {
+        coins = givenCoins;
+        memset(dp, -1, sizeof(dp));
+
+        int ans = rec(amount);
+
+        return ans >= 1e9 ? -1 : ans;
+    }
+};
