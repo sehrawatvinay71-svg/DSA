@@ -1,0 +1,47 @@
+class Solution {
+public:
+    int n,k;
+    vector<int> arr;
+    int pref[32];
+    int dp[32][32];
+
+    int rec(int l,int r){
+        //pruning
+        if(l>=r){
+            return 0;
+        }
+        if (r - l + 1 == k) {
+            return dp[l][r] = pref[r] - pref[l - 1];
+        }
+        //basecase
+        
+        //cache check
+        if(dp[l][r] != -1) return dp[l][r];
+        //transition
+        int ans = 1e9;
+        for (int mid = l; mid < r; mid++) {
+            if ((mid - l) % (k - 1) == 0) {
+                ans = min(ans,rec(l, mid) +rec(mid + 1, r));
+            }
+        }
+        if ((r - l) % (k - 1) == 0) {
+            ans+=pref[r]-pref[l-1];
+        }
+        return dp[l][r] = ans;
+        //save and return
+    }
+    int mergeStones(vector<int>& stones, int t) {
+        n=stones.size(),k = t;
+        arr = stones;
+        memset(dp,-1,sizeof(dp));
+        pref[0]=0;
+        for(int i=1;i<=n;i++){
+            pref[i]=arr[i-1]+pref[i-1];
+        }
+        if((n-1)%(k-1)!=0){
+            return -1;
+        }else{
+            return rec(1,n);
+        }
+    }
+};
