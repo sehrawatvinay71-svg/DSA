@@ -1,0 +1,35 @@
+class Solution {
+public:
+    int n;
+    vector<int> arr;
+    int dp[101][101];
+    int pref[101];
+
+    int rec(int i,int M){
+        //pruning
+        //basecase
+        if(i==n+1){
+            return 0;
+        }
+        //cache check
+        if(dp[i][M] != -1) return dp[i][M] ;
+        //transition
+        int ans = 0;
+        int temp = min(n-i+1,2*M);
+        for(int j=1;j<=temp;j++){
+            ans = max(ans,pref[n]-pref[i-1] - rec(j+i,max(j,M)));
+        }
+        //save and return
+        return  dp[i][M] = ans;
+    }
+    int stoneGameII(vector<int>& piles) {
+        n=piles.size();
+        arr = piles;
+        memset(dp,-1,sizeof(dp));
+        pref[0]=0;
+        for(int i=1;i<=n;i++){
+            pref[i]=pref[i-1]+arr[i-1];
+        }
+        return rec(1,1);
+    }
+};
