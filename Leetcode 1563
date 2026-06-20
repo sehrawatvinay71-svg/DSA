@@ -1,0 +1,43 @@
+class Solution {
+public:
+    int n;
+    vector<int> arr;
+    int dp[501][501];
+    int pref[505];
+
+    int rec(int l,int r){
+        //pruning
+        //basecase
+        if(l>=r){
+            return 0;
+        }
+        //cache check
+        if(dp[l][r]!=-1) return dp[l][r];
+        //transition
+        int ans = 0;
+        for(int mid = l;mid<r;mid++){
+            if((pref[mid]-pref[l-1]) > (pref[r] - pref[mid])){
+                ans = max(ans,pref[r] - pref[mid] + rec(mid+1,r));
+            }else if((pref[mid]-pref[l-1]) < (pref[r] - pref[mid])){
+                ans = max(ans,pref[mid] - pref[l-1] + rec(l,mid));
+            }else{
+                int temp = pref[r] - pref[mid] + rec(mid+1,r);
+                temp = max(temp,pref[mid] - pref[l-1] + rec(l,mid));
+                ans = max(ans,temp);
+            }
+        }
+        //save and return
+        return dp[l][r] = ans;
+    }
+
+    int stoneGameV(vector<int>& stoneValue) {
+        n = stoneValue.size();
+        arr = stoneValue;
+        memset(dp,-1,sizeof(dp));
+        pref[0]=0;
+        for(int i=1;i<=n;i++){
+            pref[i] = arr[i-1]+pref[i-1];
+        }
+        return rec(1,n);   
+    }
+};
