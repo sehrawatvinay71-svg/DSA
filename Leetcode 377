@@ -1,0 +1,31 @@
+class Solution {
+public:
+    int n,k;
+    vector<int> arr;
+    int dp[1001];
+
+    int rec(int sum){
+        //pruning
+        if(sum>k) return 0;
+        //basecase
+        if(sum==k){
+            return 1;
+        }
+        //cache check
+        if(dp[sum]!=-1) return dp[sum];
+        //transition
+        int ans = 0;
+        for(int i=0;i<n;i++){
+            ans += rec(sum+arr[i]);
+        }
+        return dp[sum] = ans;
+        //save and return
+    }
+    int combinationSum4(vector<int>& nums, int target) {
+        n = nums.size();
+        k = target;
+        arr = nums;
+        memset(dp,-1,sizeof(dp));
+        return rec(0);
+    }
+};
