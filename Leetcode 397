@@ -1,0 +1,33 @@
+class Solution {
+public:
+    int n;
+    unordered_map<int,int> mp;
+
+    long long rec(long long no){
+        //pruning
+        if(no<1){
+            return 1e9;
+        }
+        //basecase
+        if(no==1){
+            return 0;
+        }
+        //cache check
+        if(mp[no]) return mp[no];
+        //transition
+        long long ans = 1e9;
+        if(no%2==0){
+            ans = min(ans,rec(no/2)+1);
+        }else{
+            ans = min(ans,rec(no+1)+1);
+            ans = min(ans,rec(no-1)+1);
+        }
+        return mp[no] = ans;
+        //save and return
+    }
+    int integerReplacement(int t) {
+        n=t;
+        return rec(n);
+
+    }
+};
