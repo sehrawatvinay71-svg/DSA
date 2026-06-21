@@ -1,0 +1,19 @@
+class Solution {
+public:
+    int maxRotateFunction(vector<int>& arr) {
+        int n = arr.size();
+        int totalsum = 0;
+        int firstweightedsum = 0;
+        for(int i=0;i<n;i++){
+            totalsum+=arr[i];
+            firstweightedsum+=(i*arr[i]);
+        }
+        int ans = firstweightedsum;
+        for(int i=n-1;i>=1;i--){
+            int newweightedsum = firstweightedsum+totalsum- n*arr[i];
+            firstweightedsum = newweightedsum;
+            ans = max(firstweightedsum,ans);
+        }
+        return ans;
+    }
+};
