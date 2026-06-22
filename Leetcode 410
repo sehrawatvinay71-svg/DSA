@@ -1,0 +1,36 @@
+class Solution {
+public:
+    int n,k;
+    vector<int> arr;
+    int pref[1001];
+    int dp[1001][1001];
+
+    int rec(int i,int k){
+        //pruning
+        //base case
+        if(k==1){
+            return pref[i];
+        }
+        //cache check
+        if(dp[i][k]!=-1) return dp[i][k];
+        //transition
+        int ans = 1e9;
+        for(int mid = 1;mid<=i;mid++){
+            int sum = max(pref[i]-pref[mid] , rec(mid,k-1));
+            ans = min(ans,sum);
+        }
+        return dp[i][k] = ans;
+        //save and return
+    }
+    int splitArray(vector<int>& nums, int t) {
+        n = nums.size();
+        k = t;
+        arr = nums;
+        memset(dp,-1,sizeof(dp));
+        pref[0]=0;
+        for(int i=1;i<=n;i++){
+            pref[i] = pref[i-1]+arr[i-1];
+        }
+        return rec(n,k);
+    }
+};
