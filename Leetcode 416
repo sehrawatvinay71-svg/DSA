@@ -1,0 +1,42 @@
+class Solution {
+public:
+    int n;
+    vector<int> arr;
+    vector<vector<int>> dp;
+    int target;
+    bool rec(int i,int sum){
+        //pruning
+        if(sum>target){
+            return false;
+        }
+        //base case
+        if(i==n){
+            if(sum==target){
+                return true;
+            }else{
+                return false;
+            }
+        }
+        //chache check
+        if(dp[i][sum]!=-1) return dp[i][sum];
+        //transition
+        bool ans = false;
+        //adding to first
+        ans = ans || rec(i+1,sum+arr[i]);
+        ans = ans || rec(i+1,sum);
+        //save and return
+        return dp[i][sum] = ans;
+    }
+    bool canPartition(vector<int>& nums) {
+        n = nums.size();
+        arr = nums;
+        target = 0;
+        for(int i=0;i<n;i++){
+            target+=arr[i];
+        }
+        if(target%2!=0) return false;
+        target/=2;
+        dp = vector<vector<int>>(n,vector<int>(target+1,-1));
+        return rec(0,0);
+    }
+};
