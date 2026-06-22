@@ -1,0 +1,37 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n;
+vector<int> arr;
+map<int,int> mp;
+vector<map<int,int>> booldp;
+vector<map<int,int>> dp;
+
+bool rec(int i, int k){
+    //pruning
+    //base case
+    if(i==n){
+        return true;
+    }
+    //cache check
+    if(booldp[i][k]==1) return dp[i][k];
+    //transition
+    bool ans = false;
+    if(i!=1&&mp[arr[i]+k+1]) ans = ans || rec(mp[arr[i]+k+1], k+1);
+    if(k!=1&&mp[arr[i]+k-1]) ans = ans || rec(mp[arr[i]+k-1], k-1);
+    if(mp[arr[i]+k]) ans = ans || rec(mp[arr[i]+k], k);
+    //save and return
+    booldp[i][k] = 1;
+    return dp[i][k] = ans;
+}
+
+signed main(){
+    cin>>n;
+    arr.resize(n+1);
+    booldp.resize(n+1);
+    dp.resize(n+1);
+    for(int i=1;i<=n;i++){
+        cin>>arr[i];
+        mp[arr[i]]=i;
+    }
+    cout<<rec(1,1);
+}
