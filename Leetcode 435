@@ -1,0 +1,33 @@
+class Solution {
+public:
+    int n;
+    vector<vector<int>> arr;
+    int dp[100010];
+
+    int rec(int i){
+        //pruning
+        //base case
+        //chache check
+        if(dp[i]!=-1) return dp[i];
+        //transition
+        int ans = 1;
+        for(int j=0;j<i;j++){
+            if(arr[j][1]<=arr[i][0]){
+                ans = max(ans,rec(j)+1);
+            }
+        }
+        return dp[i] = ans;
+        //save and return
+    }
+    int eraseOverlapIntervals(vector<vector<int>>& intervals) {
+        n = intervals.size();
+        arr = intervals;
+        memset(dp,-1,sizeof(dp));
+        sort(arr.begin(),arr.end());
+        int ans = 0;
+        for(int i=0;i<n;i++){
+            ans = max(ans,rec(i));
+        }
+        return n - ans;
+    }
+};
