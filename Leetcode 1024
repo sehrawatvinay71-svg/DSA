@@ -1,0 +1,39 @@
+class Solution {
+public:
+    int n,t;
+    vector<vector<int>> arr;
+    int dp[101][101];
+
+    int rec(int i,int tim){
+        //pruning
+        if(i==n&&tim<t){
+            return 1e9;
+        }
+        //base case
+        if(tim >= t){
+            return 0;
+        }
+        //chache check
+        if(dp[i][tim]!=-1) return dp[i][tim];
+        //transition
+        int ans = 1e9;
+        if(arr[i][0]<=tim){
+            ans = min(ans,rec(i+1,arr[i][1])+1);
+        }
+        ans = min(ans,rec(i+1,tim));
+        return dp[i][tim] = ans;
+        //save and return
+    }
+    int videoStitching(vector<vector<int>>& clips, int time) {
+        n = clips.size();
+        t = time;
+        arr = clips;
+        memset(dp,-1,sizeof(dp));
+        sort(arr.begin(),arr.end());
+        if(rec(0,0)==1e9){
+            return -1;
+        }else{
+            return rec(0,0);
+        }
+    }
+};
