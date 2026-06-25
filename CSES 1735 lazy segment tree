@@ -1,0 +1,154 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+int n, q;
+int arr[200200];
+
+struct node {
+    int sum = 0;
+    int addLazy = 0;
+    int setLazy = 0;
+    bool hasSet = false;
+};
+
+node merge(node a, node b) {
+    node temp;
+    temp.sum = a.sum + b.sum;
+    return temp;
+}
+
+node seg_tree[800800];
+
+void push(int idx, int l, int r) {
+    if (seg_tree[idx].hasSet) {
+        seg_tree[idx].sum = seg_tree[idx].setLazy * (r - l + 1);
+
+        if (l != r) {
+            seg_tree[2 * idx].hasSet = true;
+            seg_tree[2 * idx].setLazy = seg_tree[idx].setLazy;
+            seg_tree[2 * idx].addLazy = 0;
+
+            seg_tree[2 * idx + 1].hasSet = true;
+            seg_tree[2 * idx + 1].setLazy = seg_tree[idx].setLazy;
+            seg_tree[2 * idx + 1].addLazy = 0;
+        }
+
+        seg_tree[idx].hasSet = false;
+    }
+
+    if (seg_tree[idx].addLazy != 0) {
+        seg_tree[idx].sum += seg_tree[idx].addLazy * (r - l + 1);
+
+        if (l != r) {
+            seg_tree[2 * idx].addLazy += seg_tree[idx].addLazy;
+            seg_tree[2 * idx + 1].addLazy += seg_tree[idx].addLazy;
+        }
+
+        seg_tree[idx].addLazy = 0;
+    }
+}
+
+void build(int idx, int l, int r) {
+    if (l == r) {
+        seg_tree[idx].sum = arr[l];
+        return;
+    }
+
+    int mid = (l + r) / 2;
+    build(2 * idx, l, mid);
+    build(2 * idx + 1, mid + 1, r);
+
+    seg_tree[idx] = merge(seg_tree[2 * idx], seg_tree[2 * idx + 1]);
+}
+
+// type 2: assign value
+void update(int idx, int l, int r, int lq, int rq, int val) {
+    push(idx, l, r);
+
+    if (lq > r || rq < l) return;
+
+    if (l >= lq && r <= rq) {
+        seg_tree[idx].hasSet = true;
+        seg_tree[idx].setLazy = val;
+        seg_tree[idx].addLazy = 0;
+        push(idx, l, r);
+        return;
+    }
+
+    int mid = (l + r) / 2;
+    update(2 * idx, l, mid, lq, rq, val);
+    update(2 * idx + 1, mid + 1, r, lq, rq, val);
+
+    seg_tree[idx] = merge(seg_tree[2 * idx], seg_tree[2 * idx + 1]);
+}
+
+// type 1: add value
+void update2(int idx, int l, int r, int lq, int rq, int val) {
+    push(idx, l, r);
+
+    if (lq > r || rq < l) return;
+
+    if (l >= lq && r <= rq) {
+        seg_tree[idx].addLazy += val;
+        push(idx, l, r);
+        return;
+    }
+
+    int mid = (l + r) / 2;
+    update2(2 * idx, l, mid, lq, rq, val);
+    update2(2 * idx + 1, mid + 1, r, lq, rq, val);
+
+    seg_tree[idx] = merge(seg_tree[2 * idx], seg_tree[2 * idx + 1]);
+}
+
+node query(int idx, int l, int r, int lq, int rq) {
+    push(idx, l, r);
+
+    if (lq > r || rq < l) {
+        return node();
+    }
+
+    if (l >= lq && rq >= r) {
+        return seg_tree[idx];
+    }
+
+    int mid = (l + r) / 2;
+
+    return merge(
+        query(2 * idx, l, mid, lq, rq),
+        query(2 * idx + 1, mid + 1, r, lq, rq)
+    );
+}
+
+signed main() {
+    cin >> n >> q;
+
+    for (int i = 1; i <= n; i++) {
+        cin >> arr[i];
+    }
+
+    build(1, 1, n);
+
+    while (q--) {
+        int x;
+        cin >> x;
+
+        if (x == 1) {
+            int a, b, c;
+            cin >> a >> b >> c;
+            update2(1, 1, n, a, b, c);
+        }
+        else if (x == 2) {
+            int a, b, c;
+            cin >> a >> b >> c;
+            update(1, 1, n, a, b, c);
+        }
+        else {
+            int a, b;
+            cin >> a >> b;
+            node ans = query(1, 1, n, a, b);
+            cout << ans.sum << endl;
+        }
+    }
+}
