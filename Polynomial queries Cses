@@ -1,0 +1,167 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define int long long
+
+int n, q;
+int arr[200200];
+
+struct node {
+    int sum;
+    int lazyStart;
+    int lazyDiff;
+
+    node() {
+        sum = 0;
+        lazyStart = 0;
+        lazyDiff = 0;
+    }
+};
+
+node seg_tree[800800];
+
+node merge(node a, node b) {
+    node temp;
+    temp.sum = a.sum + b.sum;
+    return temp;
+}
+
+// Add arithmetic progression:
+// start, start + diff, start + 2*diff...
+void apply(int idx, int l, int r, int start, int diff) {
+    int len = r - l + 1;
+
+    seg_tree[idx].sum +=
+        len * (2 * start + (len - 1) * diff) / 2;
+
+    seg_tree[idx].lazyStart += start;
+    seg_tree[idx].lazyDiff += diff;
+}
+
+void push(int idx, int l, int r) {
+    if (seg_tree[idx].lazyStart == 0 &&
+        seg_tree[idx].lazyDiff == 0) {
+        return;
+    }
+
+    if (l != r) {
+        int mid = (l + r) / 2;
+
+        int start = seg_tree[idx].lazyStart;
+        int diff = seg_tree[idx].lazyDiff;
+
+        // Left child starts from the same value
+        apply(
+            2 * idx,
+            l,
+            mid,
+            start,
+            diff
+        );
+
+        // Right child starts after left child's length
+        int leftLength = mid - l + 1;
+        int rightStart = start + leftLength * diff;
+
+        apply(
+            2 * idx + 1,
+            mid + 1,
+            r,
+            rightStart,
+            diff
+        );
+    }
+
+    seg_tree[idx].lazyStart = 0;
+    seg_tree[idx].lazyDiff = 0;
+}
+
+void build(int idx, int l, int r) {
+    if (l == r) {
+        seg_tree[idx].sum = arr[l];
+        return;
+    }
+
+    int mid = (l + r) / 2;
+
+    build(2 * idx, l, mid);
+    build(2 * idx + 1, mid + 1, r);
+
+    seg_tree[idx] = merge(
+        seg_tree[2 * idx],
+        seg_tree[2 * idx + 1]
+    );
+}
+
+void update(int idx, int l, int r, int lq, int rq) {
+    if (lq > r || rq < l) {
+        return;
+    }
+
+    if (lq <= l && r <= rq) {
+        // At index l:
+        // value added = l - lq + 1
+        int start = l - lq + 1;
+
+        apply(idx, l, r, start, 1);
+        return;
+    }
+
+    push(idx, l, r);
+
+    int mid = (l + r) / 2;
+
+    update(2 * idx, l, mid, lq, rq);
+    update(2 * idx + 1, mid + 1, r, lq, rq);
+
+    seg_tree[idx] = merge(
+        seg_tree[2 * idx],
+        seg_tree[2 * idx + 1]
+    );
+}
+
+node query(int idx, int l, int r, int lq, int rq) {
+    if (lq > r || rq < l) {
+        return node();
+    }
+
+    if (lq <= l && r <= rq) {
+        return seg_tree[idx];
+    }
+
+    push(idx, l, r);
+
+    int mid = (l + r) / 2;
+
+    return merge(
+        query(2 * idx, l, mid, lq, rq),
+        query(2 * idx + 1, mid + 1, r, lq, rq)
+    );
+}
+
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    cin >> n >> q;
+
+    for (int i = 1; i <= n; i++) {
+        cin >> arr[i];
+    }
+
+    build(1, 1, n);
+
+    while (q--) {
+        int type, a, b;
+        cin >> type >> a >> b;
+
+        if (type == 1) {
+            update(1, 1, n, a, b);
+        }
+        else {
+            cout << query(1, 1, n, a, b).sum << '\n';
+        }
+    }
+
+    return 0;
+}
