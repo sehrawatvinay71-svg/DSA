@@ -1,0 +1,30 @@
+class Solution {
+public:
+    int n;
+    vector<int> arr;
+    int dp[101][101][101];
+
+    int rec(int l,int r,int k){
+        //pruning
+        if(l>r) return 0;
+        //base case
+        //cache check
+        if(dp[l][r][k]!=-1) return dp[l][r][k];
+        //transition
+        int ans = 0;
+        ans = max(ans, (k+1)*(k+1)+rec(l+1,r,0));
+        for(int mid=l+1;mid<=r;mid++){
+            if(arr[l]==arr[mid]){
+                ans = max(ans,rec(l+1,mid-1,0)+rec(mid,r,k+1));
+            }
+        }
+        return dp[l][r][k] = ans;
+        //save and return
+    }
+    int removeBoxes(vector<int>& boxes) {
+        n = boxes.size();
+        arr = boxes;
+        memset(dp,-1,sizeof(dp));
+        return rec(0,n-1,0);
+    }
+};
