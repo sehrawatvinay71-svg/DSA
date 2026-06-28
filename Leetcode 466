@@ -1,0 +1,66 @@
+class Solution {
+public:
+    int getMaxRepetitions(string s1, int n1, string s2, int n2) {
+        int j = 0;
+        long long s1Count = 0;
+        long long s2Count = 0;
+
+        unordered_map<int, pair<long long, long long>> mp;
+
+        while (s1Count < n1) {
+
+            // Process one complete s1
+            for (int i = 0; i < s1.size(); i++) {
+                if (s1[i] == s2[j]) {
+                    j++;
+                }
+
+                if (j == s2.size()) {
+                    j = 0;
+                    s2Count++;
+                }
+            }
+
+            s1Count++;
+
+            // Same state found again
+            if (mp.find(j) != mp.end()) {
+                long long previousS1 = mp[j].first;
+                long long previousS2 = mp[j].second;
+
+                long long cycleS1 = s1Count - previousS1;
+                long long cycleS2 = s2Count - previousS2;
+
+                long long remainingS1 = n1 - s1Count;
+
+                long long cycles =
+                    remainingS1 / cycleS1;
+
+                s1Count += cycles * cycleS1;
+                s2Count += cycles * cycleS2;
+
+                // Process remaining blocks
+                while (s1Count < n1) {
+                    for (int i = 0; i < s1.size(); i++) {
+                        if (s1[i] == s2[j]) {
+                            j++;
+                        }
+
+                        if (j == s2.size()) {
+                            j = 0;
+                            s2Count++;
+                        }
+                    }
+
+                    s1Count++;
+                }
+
+                break;
+            }
+
+            mp[j] = {s1Count, s2Count};
+        }
+
+        return s2Count / n2;
+    }
+};
