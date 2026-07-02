@@ -1,0 +1,71 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define f first
+#define s second
+using state = pair<int,pair<int,int>>;
+class Solution {
+public:
+    int n,m;
+    vector<vector<int>> arr;
+    vector<vector<int>> dist;
+    vector<vector<int>> vis;
+
+    bool isvalid(int a,int b){
+        if(a>=0&&a<n&&b>=0&&b<m){
+            return true;
+        }
+        return false;
+    }
+
+    int dx[4] = {1,0,-1,0};
+    int dy[4] = {0,1,0,-1};
+
+    vector<pair<int,int>> neighbour(int x,int y){
+        vector<pair<int,int>> neig;
+        for(int i=0;i<4;i++){
+            int newx = x+dx[i];
+            int newy = y+dy[i];
+            if(isvalid(newx,newy)){
+                neig.push_back({newx,newy});
+            }
+        }
+        return neig;
+    }
+
+    void bfs01(int a,int b){
+        deque<state> dq;
+        dq.push_back({0,{a,b}});
+        dist[a][b] = arr[a][b];
+
+        while(!dq.empty()){
+            state curr = dq.front();
+            dq.pop_front();
+            if(vis[curr.s.f][curr.s.s]) continue;
+            vis[curr.s.f][curr.s.s] = 1;
+            for(auto v : neighbour(curr.s.f,curr.s.s)){
+                if(dist[v.f][v.s]>dist[curr.s.f][curr.s.s]+arr[v.f][v.s]){
+                    dist[v.f][v.s] = dist[curr.s.f][curr.s.s]+arr[v.f][v.s];
+                }
+                if(arr[v.f][v.s]==0){
+                    dq.push_front({dist[v.f][v.s],{v.f,v.s}});
+                }else{
+                    dq.push_back({dist[v.f][v.s],{v.f,v.s}});
+                }
+            }
+        }
+
+    }
+    bool findSafeWalk(vector<vector<int>>& grid, int health) {
+        n = grid.size();
+        m = grid[0].size();
+        arr = grid;
+        dist = vector<vector<int>>(n,vector<int>(m,1e9));
+        vis = vector<vector<int>>(n,vector<int>(m,0));
+        bfs01(0,0);
+        if(health<dist[n-1][m-1]+1){
+            return false;
+        }else{
+            return true;
+        }
+    }
+};
