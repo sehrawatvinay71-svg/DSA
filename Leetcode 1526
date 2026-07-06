@@ -1,0 +1,29 @@
+class Solution {
+public:
+    int n;
+    vector<int> target;
+    int dp[100001];
+
+    int rec(int i){
+        //pruning
+        //base case
+        if(i==n){
+            return 0;
+        }
+        //cache check
+        if(dp[i]!=-1) return dp[i];
+        //transition
+        int ans;
+        if(i==0) return rec(i+1) + target[i];
+        if(target[i]>target[i-1])ans = rec(i+1) + target[i] - target[i-1];
+        else ans = rec(i+1);
+        //save and return
+        return dp[i] = ans;
+    }
+    int minNumberOperations(vector<int>& arr) {
+        target = arr;
+        n = arr.size();
+        memset(dp,-1,sizeof(dp));
+        return rec(0);
+    }
+};
