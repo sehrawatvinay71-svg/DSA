@@ -1,0 +1,30 @@
+class Solution {
+public:
+    int magicalString(int n) {
+        if (n <= 0) return 0;
+        if (n <= 3) return 1;
+
+        string s = "122";
+
+        int i = 2;      // read pointer
+        int next = 1;   // next digit to write
+
+        while (s.size() < n) {
+            int cnt = s[i] - '0';
+
+            for (int k = 0; k < cnt && s.size() < n; k++) {
+                s.push_back(next + '0');
+            }
+
+            next = 3 - next; // 1 -> 2, 2 -> 1
+            i++;
+        }
+
+        int ans = 0;
+        for (char c : s) {
+            if (c == '1') ans++;
+        }
+
+        return ans;
+    }
+};
