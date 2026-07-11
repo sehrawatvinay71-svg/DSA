@@ -1,0 +1,51 @@
+class Solution {
+public:
+    int n,x;
+    vector<int> arr;
+    int dp[1001];
+
+    int rec(int i){
+        //pruning
+        if(i<0||i>=n){
+            return -1e9;
+        } 
+        //base case
+        //cache check
+        if(dp[i]!=-1) return dp[i];
+        //transition
+        int ans = 1;
+        for(int j = i+1;j<=i+x;j++){
+            if(j<n){
+                if(arr[j]>=arr[i]){
+                    break;
+                }
+                if(arr[i]>arr[j]){
+                    ans = max(ans,rec(j)+1);
+                }
+            }
+        }
+        for(int j = i-1;j>=i-x;j--){
+            if(j>=0){
+                if(arr[j]>=arr[i]){
+                    break;
+                }
+                if(arr[i]>arr[j]){
+                    ans = max(ans,rec(j)+1);
+                }
+            }
+        }
+        //save and return
+        return dp[i] = ans;
+    }
+    int maxJumps(vector<int>& arr1, int d) {
+        n = arr1.size();
+        x = d;
+        arr = arr1;
+        memset(dp,-1,sizeof(dp));
+        int ans = 0;
+        for(int i=0;i<n;i++){
+            ans= max(ans,rec(i));
+        }
+        return ans;
+    }
+};
