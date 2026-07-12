@@ -1,0 +1,64 @@
+class Solution {
+public:
+    int n,m;
+    vector<vector<int>> arr;
+    vector<vector<int>> dist;
+
+    bool isvalid(int a,int b){
+        if(a>=0&&a<n&&b>=0&&b<m){
+            return true;
+        }
+        return false;
+    }
+
+    int dx[4] = {1,-1,0,0};
+    int dy[4] = {0,0,1,-1};
+
+    vector<pair<int,int>> neighbour(int x,int y){
+        vector<pair<int,int>> neigh;
+        for(int i=0;i<4;i++){
+            int newi = x + dx[i];
+            int newy = y + dy[i];
+            if(isvalid(newi,newy)){
+                neigh.push_back({newi,newy});
+            }
+        }
+        return neigh;
+
+    }
+
+    void bfs(){
+        queue<pair<int,pair<int,int>>> q;
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(arr[i][j]==0){
+                    q.push({0,{i,j}});
+                    dist[i][j]=0;
+                }
+            }
+        }
+        while(!q.empty()){
+            pair<int,pair<int,int>> curr =  q.front();
+            q.pop();
+            int curdis = curr.first;
+            int curri = curr.second.first;
+            int currj = curr.second.second;
+            for(auto x: neighbour(curri,currj)){
+                if(dist[x.first][x.second]>dist[curri][currj]+1){
+                    dist[x.first][x.second] = dist[curri][currj]+1;
+                    q.push({dist[x.first][x.second],{x.first,x.second}});
+                }
+            }
+        }
+    }
+
+    vector<vector<int>> updateMatrix(vector<vector<int>>& mat) {
+        n = mat.size();
+        m = mat[0].size();
+
+        arr = mat;
+        dist = vector<vector<int>>(n,vector<int>(m,1e9));
+        bfs();
+        return dist;
+    }
+};
