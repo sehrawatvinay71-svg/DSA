@@ -1,0 +1,117 @@
+class Solution {
+public:
+
+    // nums se length k ki maximum subsequence nikalta hai
+    vector<int> getMaxSubsequence(vector<int>& nums, int k) {
+
+        vector<int> st;
+
+        int remove = nums.size() - k;
+
+        for (int x : nums) {
+
+            while (!st.empty() &&
+                   remove > 0 &&
+                   st.back() < x) {
+
+                st.pop_back();
+                remove--;
+            }
+
+            st.push_back(x);
+        }
+
+        st.resize(k);
+
+        return st;
+    }
+
+
+    // Check karta hai a[i...] bada hai ya b[j...]
+    bool isGreater(vector<int>& a, int i,
+                   vector<int>& b, int j) {
+
+        while (i < a.size() &&
+               j < b.size() &&
+               a[i] == b[j]) {
+
+            i++;
+            j++;
+        }
+
+        // b finish ho gaya, toh a greater hai
+        if (j == b.size()) {
+            return true;
+        }
+
+        // a finish ho gaya, toh a greater nahi hai
+        if (i == a.size()) {
+            return false;
+        }
+
+        return a[i] > b[j];
+    }
+
+
+    // Dono subsequences ko maximum way mein merge karta hai
+    vector<int> mergeMax(vector<int>& a,
+                         vector<int>& b) {
+
+        vector<int> ans;
+
+        int i = 0;
+        int j = 0;
+
+        while (i < a.size() || j < b.size()) {
+
+            if (isGreater(a, i, b, j)) {
+                ans.push_back(a[i]);
+                i++;
+            } else {
+                ans.push_back(b[j]);
+                j++;
+            }
+        }
+
+        return ans;
+    }
+
+
+    vector<int> maxNumber(vector<int>& nums1,
+                          vector<int>& nums2,
+                          int k) {
+
+        int n = nums1.size();
+        int m = nums2.size();
+
+        vector<int> ans;
+
+        // nums1 se minimum kitne lene padenge
+        int start = max(0, k - m);
+
+        // nums1 se maximum kitne le sakte hain
+        int end = min(k, n);
+
+        for (int take1 = start; take1 <= end; take1++) {
+
+            int take2 = k - take1;
+
+            vector<int> first =
+                getMaxSubsequence(nums1, take1);
+
+            vector<int> second =
+                getMaxSubsequence(nums2, take2);
+
+            vector<int> current =
+                mergeMax(first, second);
+
+            if (ans.empty() ||
+                isGreater(current, 0, ans, 0)) {
+
+                ans = current;
+            }
+        }
+
+        return ans;
+    }
+};
