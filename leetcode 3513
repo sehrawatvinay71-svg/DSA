@@ -1,0 +1,19 @@
+class Solution {
+public:
+    int uniqueXorTriplets(vector<int>& nums) {
+        int n = nums.size();
+
+        if (n < 3) {
+            return n;
+        }
+
+        int power = 1;
+
+        // Find the smallest power of 2 strictly greater than n
+        while (power <= n) {
+            power *= 2;
+        }
+
+        return power;
+    }
+};
